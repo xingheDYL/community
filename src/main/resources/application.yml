@@ -1,4 +1,5 @@
 # ServerProperties
+
 server:
   port: 8080
   servlet:
@@ -23,7 +24,7 @@ spring:
     host: smtp.qq.com
     port: 465
     username: 1329749225@qq.com
-    password: stanzbekidqsjfjj
+    password: jzsmgryogrpahebi
     protocol: smtps
     properties:
       mail:
@@ -42,6 +43,7 @@ spring:
 mybatis-plus:
   configuration:
     map-underscore-to-camel-case: true
+    use-generated-keys: true
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
   # 设置MyBatis-Plus的全局配置
   global-config:
@@ -52,18 +54,9 @@ mybatis-plus:
       id-type: auto
   # 配置类型别名所对应的包
   type-aliases-package: com.dyl.community.entity
-  # logger
-  #logging.level.com.dyl.community=debug
-  #logging.file=d:/work/data/dyl/community.log
-
-  # MailProperties
-  #  spring.mail.host=smtp.sina.com
-  #  spring.mail.port=465
-  #  spring.mail.username=nowcoder@sina.com
-  #  spring.mail.password=nowcoder123
-  #  spring.mail.protocol=smtps
-  #  spring.mail.properties.mail.smtp.ssl.enable=true
 
   # community
-#  community.path.domain=http://localhost:8080
-#  community.path.upload=d:/work/data/upload
+community:
+  path:
+    domain: http://localhost:8080
+#  community.path.upload=D:/Learn/data/community/upload
