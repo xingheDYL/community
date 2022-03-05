@@ -1,0 +1,45 @@
+# ServerProperties
+server:
+  port: 8080
+  servlet:
+    context-path: /community
+# ThymeleafProperties
+spring:
+  thymeleaf:
+    cache: false
+  # DataSourceProperties
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/community?characterEncoding=utf-8&useSSL=false
+    username: root
+    password: root
+    type: com.zaxxer.hikari.HikariDataSource
+    hikari:
+      maximum-pool-size: 15
+      minimum-idle: 5
+      idle-timeout: 30000
+# MybatisProperties
+#mybatis:
+#  mapper-locations:
+#  classpath: mapper/*xml
+#  type-aliases-package: com.dyl.community.entity
+#  configuration:
+#    use-generated-keys: true
+#    map-underscore-to-camel-case: true
+# 配置MyBatis-Plus日志
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  # 设置MyBatis-Plus的全局配置
+  global-config:
+    db-config:
+      # 设置实体类所对应的表的统一前缀
+#      table-prefix: t_
+      # 设置统一的主键生成策略
+      id-type: auto
+  # 配置类型别名所对应的包
+  type-aliases-package: com.dyl.community.entity
+# logger
+#logging.level.com.dyl.community=debug
+#logging.file=d:/work/data/dyl/community.log
