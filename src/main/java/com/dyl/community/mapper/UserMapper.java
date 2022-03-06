@@ -2,6 +2,7 @@ package com.dyl.community.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.dyl.community.entity.User;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -10,17 +11,18 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface UserMapper extends BaseMapper<User> {
-    User selectById(int id);
 
-    User selectByName(String username);
+    User selectById(@Param("id")int id);
 
-    User selectByEmail(String email);
+    User selectByName(@Param("username")String username);
+
+    User selectByEmail(@Param("email")String email);
 
     int insertUser(User user);
 
-    int updateStatus(int id, int status);
+    int updateStatus(@Param("id")int id, @Param("status")int status);
 
-    int updateHeader(int id, String headerUrl);
+    int updateHeader(@Param("id")int id, @Param("headerUrl")String headerUrl);
 
-    int updatePassword(int id, String password);
+    int updatePassword(@Param("id")int id, @Param("password") String password);
 }

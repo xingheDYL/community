@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Map;
 
 /**
  * @author admin
@@ -106,6 +107,41 @@ public class UserController {
             }
         } catch (IOException e) {
             logger.error("读取头像失败: " + e.getMessage());
+        }
+    }
+
+    //个人设置页面修改密码功能
+    //这里形参用Model类和User类即可，SpringMVC会把传入内容按照User属性填入user
+    @RequestMapping(path = "/setting", method = RequestMethod.POST)
+    public String updatePassword(Model model, String password,String newPassword,String confirmPassword) {
+        if(StringUtils.isBlank(password)){
+            model.addAttribute("passwordMsg","请输入原始密码！");
+            return "/site/setting";
+        }
+        if(StringUtils.isBlank(newPassword)){
+            model.addAttribute("newPasswordMsg","请输入新密码！");
+            return "/site/setting";
+        }
+        if(StringUtils.isBlank(confirmPassword)){
+            model.addAttribute("confirmPasswordMsg","请再次输入新密码！");
+            return "/site/setting";
+        }
+        if(!confirmPassword.equals(newPassword)){
+            model.addAttribute("newPasswordMsg","两次输入的新密码不相同！");
+            return "/site/setting";
+        }
+        User user=hostHolder.getUser();
+        Map<String, Object> map = userService.updatePassword(password,newPassword,user.getId());
+        if (map == null || map.isEmpty()) {
+            //传给templates注册成功信息
+            model.addAttribute("msg", "密码修改成功");
+            //跳到回个人设置页面
+            model.addAttribute("target", "/logout");
+            return "/site/operate-result";
+        }else {
+            //失败了传失败信息，跳到到原来的页面
+            model.addAttribute("passwordMsg","输入的原始密码错误！");
+            return "/site/setting";
         }
     }
 }
