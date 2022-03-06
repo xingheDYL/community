@@ -4,7 +4,9 @@ package com.dyl.community;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.dyl.community.entity.DiscussPost;
+import com.dyl.community.entity.LoginTicket;
 import com.dyl.community.mapper.DiscussPostMapper;
+import com.dyl.community.mapper.LoginTicketMapper;
 import com.dyl.community.mapper.UserMapper;
 import com.dyl.community.entity.User;
 import org.junit.jupiter.api.Test;
@@ -27,6 +29,9 @@ public class MapperTests {
 
     @Autowired
     private DiscussPostMapper discussPostMapper;
+
+    @Autowired
+    private LoginTicketMapper loginTicketMapper;
 
     @Test
     public void testSelectUser() {
@@ -92,4 +97,25 @@ public class MapperTests {
 //        System.out.println(page.hasPrevious());
 //    }
 
+
+    @Test
+    public void testInsertLoginTicket() {
+        LoginTicket loginTicket = new LoginTicket();
+        loginTicket.setUserId(101);
+        loginTicket.setTicket("abc");
+        loginTicket.setStatus(0);
+        loginTicket.setExpired(new Date(System.currentTimeMillis() + 1000 * 60 * 10));
+
+        loginTicketMapper.insertSelective(loginTicket);
+    }
+
+    @Test
+    public void testSelectLoginTicket() {
+        LoginTicket loginTicket = loginTicketMapper.selectByTicket("abc");
+        System.out.println(loginTicket);
+
+        loginTicketMapper.updateStatus("abc", 1);
+        loginTicket = loginTicketMapper.selectByTicket("abc");
+        System.out.println(loginTicket);
+    }
 }
