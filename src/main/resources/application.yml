@@ -1,5 +1,4 @@
 # ServerProperties
-
 server:
   port: 8080
   servlet:
@@ -59,4 +58,4 @@ mybatis-plus:
 community:
   path:
     domain: http://localhost:8080
-#  community.path.upload=D:/Learn/data/community/upload
+    upload: D:/Learn/data/community/upload
