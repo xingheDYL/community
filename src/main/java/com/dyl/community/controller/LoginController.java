@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.imageio.ImageIO;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -133,11 +132,10 @@ public class LoginController implements CommunityConstant {
         }
     }
 
-    @RequestMapping(path = "/logout",method = RequestMethod.GET)
-    public String logout(@CookieValue("ticket") String ticket){
+    @RequestMapping(path = "/logout", method = RequestMethod.GET)
+    public String logout(@CookieValue("ticket") String ticket) {
         userService.logout(ticket);
         return "redirect:/login";
         //默认是get请求
     }
-
 }
