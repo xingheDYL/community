@@ -83,21 +83,6 @@ public class MapperTests {
         System.out.println(rows);
     }
 
-//    @Test
-//    public void testPage() {
-//        Page<DiscussPost> page = new Page<>(2, 3);
-////        QueryWrapper<DiscussPost> queryWrapper = new QueryWrapper<>();
-////        queryWrapper.orderByDesc("type")
-////                .orderByDesc("create_time");
-//        discussPostMapper.selectPage(page,101);
-//        System.out.println(page.getRecords());
-//        System.out.println(page.getPages());
-//        System.out.println(page.getTotal());
-//        System.out.println(page.hasNext());
-//        System.out.println(page.hasPrevious());
-//    }
-
-
     @Test
     public void testInsertLoginTicket() {
         LoginTicket loginTicket = new LoginTicket();
@@ -106,7 +91,7 @@ public class MapperTests {
         loginTicket.setStatus(0);
         loginTicket.setExpired(new Date(System.currentTimeMillis() + 1000 * 60 * 10));
 
-        loginTicketMapper.insertSelective(loginTicket);
+        loginTicketMapper.insertLoginTicket(loginTicket);
     }
 
     @Test

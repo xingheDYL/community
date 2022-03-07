@@ -36,4 +36,25 @@ public class CommentService implements CommunityConstant/*extends IService<Comme
     public int findCommentCount(int entityType, int entityId) {
         return commentMapper.selectCountByEntity(entityType, entityId);
     }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
+    public int addComment(Comment comment) {
+        if (comment == null) {
+            throw new IllegalArgumentException("参数不能为空!");
+        }
+
+        // 添加评论
+        comment.setContent(HtmlUtils.htmlEscape(comment.getContent()));
+        comment.setContent(sensitiveFilter.filter(comment.getContent()));
+        int rows = commentMapper.insertComment(comment);
+//        int rows = commentMapper.insertSelective(comment);
+
+        // 更新帖子评论数量
+        if (comment.getEntityType() == ENTITY_TYPE_POST) {
+            int count = commentMapper.selectCountByEntity(comment.getEntityType(), comment.getEntityId());
+            discussPostService.updateCommentCount(comment.getEntityId(), count);
+        }
+
+        return rows;
+    }
 }

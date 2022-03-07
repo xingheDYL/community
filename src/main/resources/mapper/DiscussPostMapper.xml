@@ -13,7 +13,8 @@
     </sql>
 
     <select id="selectDiscussPosts" resultType="DiscussPost">
-        select <include refid="selectFields"></include>
+        select
+        <include refid="selectFields"></include>
         from discuss_post
         where status != 2
         <if test="userId!=0">
@@ -38,7 +39,8 @@
     </insert>
 
     <select id="selectDiscussPostById" resultType="DiscussPost">
-        select <include refid="selectFields"></include>
+        select
+        <include refid="selectFields"></include>
         from discuss_post
         where id = #{id}
     </select>

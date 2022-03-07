@@ -1,5 +1,7 @@
 package com.dyl.community.mapper;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.dyl.community.entity.Comment;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.springframework.stereotype.Repository;
@@ -18,6 +20,7 @@ public interface CommentMapper extends BaseMapper<Comment> {
     int selectCountByEntity(int entityType, int entityId);
 
     int insertComment(Comment comment);
+
 }
 
 

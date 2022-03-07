@@ -6,6 +6,6 @@ import com.dyl.community.entity.LoginTicket;
 /**
  * @author admin
  */
-public interface LoginTicketService extends IService<LoginTicket> {
+public interface LoginTicketService/* extends IService<LoginTicket> */{
 
 }

@@ -19,36 +19,18 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface LoginTicketMapper extends BaseMapper<LoginTicket> {
 
-//    @Insert({
-//            "insert into login_ticket(user_id,ticket,status,expired) ",
-//            "values(#{userId},#{ticket},#{status},#{expired})"
-//    })
-//    @Options(useGeneratedKeys = true, keyProperty = "id")
-//    int insertLoginTicket(LoginTicket loginTicket);
-
-    /**
-     * 添加信息
-     *
-     * @param loginTicket loginTicket
-     * @return int
-     */
+    @Insert({
+            "insert into login_ticket(user_id,ticket,status,expired) ",
+            "values(#{userId},#{ticket},#{status},#{expired})"
+    })
     @Options(useGeneratedKeys = true, keyProperty = "id")
-    int insertSelective(LoginTicket loginTicket);
+    int insertLoginTicket(LoginTicket loginTicket);
 
-//    @Select({
-//            "select id,user_id,ticket,status,expired ",
-//            "from login_ticket where ticket=#{ticket}"
-//    })
-//    LoginTicket selectByTicket(String ticket);
-
-    /**
-     * 通过Ticket查询信息
-     *
-     * @param ticket ticket
-     * @return List<LoginTicket>
-     */
-    LoginTicket selectByTicket(@Param("ticket") String ticket);
-
+    @Select({
+            "select id,user_id,ticket,status,expired ",
+            "from login_ticket where ticket=#{ticket}"
+    })
+    LoginTicket selectByTicket(String ticket);
 
     @Update({
             "<script>",

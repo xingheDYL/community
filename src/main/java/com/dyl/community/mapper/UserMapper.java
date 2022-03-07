@@ -12,17 +12,17 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserMapper extends BaseMapper<User> {
 
-    User selectById(@Param("id")int id);
+    User selectById(int id);
 
-    User selectByName(@Param("username")String username);
+    User selectByName(String username);
 
-    User selectByEmail(@Param("email")String email);
+    User selectByEmail(String email);
 
     int insertUser(User user);
 
-    int updateStatus(@Param("id")int id, @Param("status")int status);
+    int updateStatus(int id, int status);
 
-    int updateHeader(@Param("id")int id, @Param("headerUrl")String headerUrl);
+    int updateHeader(int id, String headerUrl);
 
-    int updatePassword(@Param("id")int id, @Param("password") String password);
+    int updatePassword(int id, String password);
 }
