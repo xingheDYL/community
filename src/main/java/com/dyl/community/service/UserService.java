@@ -194,4 +194,8 @@ public class UserService implements CommunityConstant/*extends IService<User>*/ 
 
         return map;
     }
+
+    public User findUserByName(String username) {
+        return userMapper.selectByName(username);
+    }
 }

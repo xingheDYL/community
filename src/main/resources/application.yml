@@ -57,5 +57,5 @@ mybatis-plus:
   # community
 community:
   path:
-    domain: http://localhost:8080
+    domain: http://127.0.0.1:8080
     upload: D:/Learn/data/community/upload
