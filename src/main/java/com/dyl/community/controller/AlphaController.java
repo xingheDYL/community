@@ -29,12 +29,15 @@ public class AlphaController {
     @RequestMapping("/hello")
     @ResponseBody
     public String sayHello() {
+        //测试500错误
+        Integer.valueOf("abc");
         return "Hello Spring Boot.";
     }
 
     @RequestMapping("/data")
     @ResponseBody
     public String getData() {
+        Integer.valueOf("abc");
         return alphaService.find();
     }
 
