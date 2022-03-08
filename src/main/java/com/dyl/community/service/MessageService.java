@@ -13,10 +13,10 @@ import java.util.List;
 @Service
 public class MessageService {
 
-    @Resource
+    @Autowired
     private MessageMapper messageMapper;
 
-    @Resource
+    @Autowired
     private SensitiveFilter sensitiveFilter;
 
     public List<Message> findConversations(int userId, int offset, int limit) {
@@ -39,14 +39,13 @@ public class MessageService {
         return messageMapper.selectLetterUnreadCount(userId, conversationId);
     }
 
-//    public int addMessage(Message message) {
-//        message.setContent(HtmlUtils.htmlEscape(message.getContent()));
-//        message.setContent(sensitiveFilter.filter(message.getContent()));
-//        return messageMapper.insertMessage(message);
-//    }
+    public int addMessage(Message message) {
+        message.setContent(HtmlUtils.htmlEscape(message.getContent()));
+        message.setContent(sensitiveFilter.filter(message.getContent()));
+        return messageMapper.insertMessage(message);
+    }
 
-//    public int readMessage(List<Integer> ids) {
-//        return messageMapper.updateStatus(ids, 1);
-//    }
-
+    public int readMessage(List<Integer> ids) {
+        return messageMapper.updateStatus(ids, 1);
+    }
 }

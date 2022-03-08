@@ -1,6 +1,6 @@
 package com.dyl.community.service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
+//import com.baomidou.mybatisplus.extension.service.IService;
 import com.dyl.community.entity.DiscussPost;
 import com.dyl.community.mapper.DiscussPostMapper;
 import com.dyl.community.util.SensitiveFilter;

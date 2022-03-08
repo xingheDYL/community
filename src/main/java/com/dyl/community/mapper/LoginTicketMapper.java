@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+//import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.dyl.community.entity.LoginTicket;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Options;
@@ -17,7 +17,7 @@ import org.springframework.stereotype.Repository;
  * @Entity com.dyl.community.entity.LoginTicket
  */
 @Repository
-public interface LoginTicketMapper extends BaseMapper<LoginTicket> {
+public interface LoginTicketMapper /*extends BaseMapper<LoginTicket>*/ {
 
     @Insert({
             "insert into login_ticket(user_id,ticket,status,expired) ",

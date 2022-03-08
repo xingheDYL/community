@@ -1,7 +1,7 @@
 package com.dyl.community.mapper;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+//import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+//import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.dyl.community.entity.DiscussPost;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -13,7 +13,7 @@ import java.util.List;
  * @Entity com.dyl.community.entity.DiscussPost
  */
 @Repository
-public interface DiscussPostMapper extends BaseMapper<DiscussPost> {
+public interface DiscussPostMapper /*extends BaseMapper<DiscussPost>*/ {
 
     List<DiscussPost> selectDiscussPosts(int userId, int offset, int limit);
 

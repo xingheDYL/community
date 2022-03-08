@@ -1,6 +1,6 @@
 package com.dyl.community.mapper;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+//import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.dyl.community.entity.User;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
  * @Entity com.dyl.community.entity.User
  */
 @Repository
-public interface UserMapper extends BaseMapper<User> {
+public interface UserMapper /*extends BaseMapper<User>*/ {
 
     User selectById(int id);
 

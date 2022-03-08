@@ -1,7 +1,7 @@
 package com.dyl.community.service;
 
 import com.dyl.community.entity.Comment;
-import com.baomidou.mybatisplus.extension.service.IService;
+//import com.baomidou.mybatisplus.extension.service.IService;
 import com.dyl.community.mapper.CommentMapper;
 import com.dyl.community.util.CommunityConstant;
 import com.dyl.community.util.SensitiveFilter;

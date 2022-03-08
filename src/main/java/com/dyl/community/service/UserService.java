@@ -1,6 +1,6 @@
 package com.dyl.community.service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
+//import com.baomidou.mybatisplus.extension.service.IService;
 import com.dyl.community.entity.LoginTicket;
 import com.dyl.community.entity.User;
 import com.dyl.community.mapper.LoginTicketMapper;
@@ -160,7 +160,7 @@ public class UserService implements CommunityConstant/*extends IService<User>*/ 
         loginTicket.setStatus(0);
         loginTicket.setExpired(new Date(System.currentTimeMillis() + expireSeconds * 1000));
 
-        loginTicketMapper.insert(loginTicket);
+        loginTicketMapper.insertLoginTicket(loginTicket);
 
         map.put("ticket", loginTicket.getTicket());
 

@@ -1,6 +1,6 @@
 package com.dyl.community.service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
+//import com.baomidou.mybatisplus.extension.service.IService;
 import com.dyl.community.entity.LoginTicket;
 
 /**
