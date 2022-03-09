@@ -17,6 +17,7 @@ import org.springframework.stereotype.Repository;
  * @Entity com.dyl.community.entity.LoginTicket
  */
 @Repository
+@Deprecated
 public interface LoginTicketMapper /*extends BaseMapper<LoginTicket>*/ {
 
     @Insert({
