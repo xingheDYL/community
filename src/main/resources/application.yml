@@ -30,6 +30,11 @@ spring:
         smtp:
           ssl:
             enable: true
+  # RedisProperties
+  redis:
+    database: 11
+    host: localhost
+    port: 6379
 # MybatisProperties
 mybatis:
   mapper-locations: mapper/*xml
@@ -37,8 +42,8 @@ mybatis:
   configuration:
     use-generated-keys: true
     map-underscore-to-camel-case: true
-# 配置MyBatis-Plus日志
-#mybatis-plus:
+  # 配置MyBatis-Plus日志
+  #mybatis-plus:
   #  configuration:
   #    map-underscore-to-camel-case: true
   #    use-generated-keys: true
