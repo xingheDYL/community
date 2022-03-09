@@ -2,6 +2,7 @@ package com.dyl.community.controller;
 
 import com.dyl.community.annotation.LoginRequired;
 import com.dyl.community.entity.User;
+import com.dyl.community.service.LikeService;
 import com.dyl.community.service.UserService;
 import com.dyl.community.util.CommunityUtil;
 import com.dyl.community.util.HostHolder;
@@ -47,6 +48,9 @@ public class UserController {
 
     @Autowired
     private HostHolder hostHolder;
+
+    @Autowired
+    private LikeService likeService;
 
     @LoginRequired
     @RequestMapping(path = "/setting", method = RequestMethod.GET)
@@ -145,5 +149,22 @@ public class UserController {
             model.addAttribute("passwordMsg", "输入的原始密码错误！");
             return "/site/setting";
         }
+    }
+
+    // 个人主页
+    @RequestMapping(path = "/profile/{userId}", method = RequestMethod.GET)
+    public String getProfilePage(@PathVariable("userId") int userId, Model model) {
+        User user = userService.findUserById(userId);
+        if (user == null) {
+            throw new RuntimeException("该用户不存在");
+        }
+
+        // 用户
+        model.addAttribute("user", user);
+        // 获赞数量
+        int likeCount = likeService.findUserLikeCount(userId);
+        model.addAttribute("likeCount", likeCount);
+
+        return "/site/profile";
     }
 }
