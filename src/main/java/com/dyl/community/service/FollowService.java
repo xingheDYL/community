@@ -102,6 +102,7 @@ public class FollowService implements CommunityConstant {
     public List<Map<String, Object>> findFollowers(int userId, int offset, int limit) {
         String followerKey = RedisKeyUtil.getFollowerKey(ENTITY_TYPE_USER, userId);
         Set<Integer> targetIds = redisTemplate.opsForZSet().reverseRange(followerKey, offset, offset + limit - 1);
+        // 虽然Set集合是无序的，但是在此时Redis内部将其变成了有序的
 
         if (targetIds == null) {
             return null;
