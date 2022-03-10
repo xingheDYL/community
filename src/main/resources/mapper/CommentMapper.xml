@@ -14,7 +14,7 @@
 
     <select id="selectCommentsByEntity" resultType="Comment">
         select
-        <include refid="selectFields"></include>
+        <include refid="selectFields"/>
         from comment
         where status = 0
         and entity_type = #{entityType}
@@ -31,8 +31,14 @@
         and entity_id = #{entityId}
     </select>
 
+    <select id="selectCommentById" resultType="Comment">
+        select
+        <include refid="selectFields"/>
+        from comment where id = #{id}
+    </select>
+
     <insert id="insertComment" parameterType="Comment">
-        insert into comment(<include refid="insertFields"></include>)
+        insert into comment(<include refid="insertFields"/>)
         values(#{userId},#{entityType},#{entityId},#{targetId},#{content},#{status},#{createTime})
     </insert>
 </mapper>

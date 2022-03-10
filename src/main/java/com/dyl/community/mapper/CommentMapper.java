@@ -21,6 +21,8 @@ public interface CommentMapper /*extends BaseMapper<Comment>*/ {
 
     int insertComment(Comment comment);
 
+    Comment selectCommentById(int id);
+
 }
 
 
