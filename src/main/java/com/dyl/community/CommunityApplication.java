@@ -7,6 +7,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.Environment;
 import org.springframework.util.StringUtils;
 
+import javax.annotation.PostConstruct;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
@@ -16,6 +17,13 @@ import java.net.UnknownHostException;
 @SpringBootApplication
 @Slf4j
 public class CommunityApplication {
+
+    @PostConstruct
+    public void init() {
+        // 解决netty启动冲突问题
+        // see Netty4Utils.setAvailableProcessors()
+        System.setProperty("es.set.netty.runtime.available.processors", "false");
+    }
 
     public static void main(String[] args) throws UnknownHostException {
         ConfigurableApplicationContext application = SpringApplication.run(CommunityApplication.class, args);
