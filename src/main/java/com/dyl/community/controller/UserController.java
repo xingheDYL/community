@@ -9,6 +9,7 @@ import com.dyl.community.service.*;
 import com.dyl.community.util.CommunityConstant;
 import com.dyl.community.util.CommunityUtil;
 import com.dyl.community.util.HostHolder;
+import com.dyl.community.util.RedisKeyUtil;
 import com.qiniu.util.Auth;
 import com.qiniu.util.StringMap;
 import org.apache.commons.lang3.StringUtils;
@@ -16,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -79,6 +81,9 @@ public class UserController implements CommunityConstant {
 
     @Autowired
     private CommentService commentService;
+
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     @LoginRequired
     @RequestMapping(path = "/setting", method = RequestMethod.GET)
@@ -176,38 +181,105 @@ public class UserController implements CommunityConstant {
 
     //个人设置页面修改密码功能
     //这里形参用Model类和User类即可，SpringMVC会把传入内容按照User属性填入user
-    @RequestMapping(path = "/setting", method = RequestMethod.POST)
-    public String updatePassword(Model model, String password, String newPassword, String confirmPassword) {
-        if (StringUtils.isBlank(password)) {
-            model.addAttribute("passwordMsg", "请输入原始密码！");
-            return "/site/setting";
-        }
-        if (StringUtils.isBlank(newPassword)) {
-            model.addAttribute("newPasswordMsg", "请输入新密码！");
-            return "/site/setting";
-        }
-        if (StringUtils.isBlank(confirmPassword)) {
-            model.addAttribute("confirmPasswordMsg", "请再次输入新密码！");
-            return "/site/setting";
-        }
-        if (!confirmPassword.equals(newPassword)) {
-            model.addAttribute("newPasswordMsg", "两次输入的新密码不相同！");
-            return "/site/setting";
-        }
+//    @RequestMapping(path = "/setting", method = RequestMethod.POST)
+//    public String updatePassword(Model model, String password, String newPassword, String confirmPassword) {
+//        if (StringUtils.isBlank(password)) {
+//            model.addAttribute("passwordMsg", "请输入原始密码！");
+//            return "/site/setting";
+//        }
+//        if (StringUtils.isBlank(newPassword)) {
+//            model.addAttribute("newPasswordMsg", "请输入新密码！");
+//            return "/site/setting";
+//        }
+//        if (StringUtils.isBlank(confirmPassword)) {
+//            model.addAttribute("confirmPasswordMsg", "请再次输入新密码！");
+//            return "/site/setting";
+//        }
+//        if (!confirmPassword.equals(newPassword)) {
+//            model.addAttribute("newPasswordMsg", "两次输入的新密码不相同！");
+//            return "/site/setting";
+//        }
+//        User user = hostHolder.getUser();
+//        Map<String, Object> map = userService.updatePassword(password, newPassword, user.getId());
+//        if (map == null || map.isEmpty()) {
+//            //传给templates注册成功信息
+//            model.addAttribute("msg", "密码修改成功");
+//            //跳到回个人设置页面
+//            model.addAttribute("target", "/logout");
+//            return "/site/operate-result";
+//        } else {
+//            //失败了传失败信息，跳到到原来的页面
+//            model.addAttribute("passwordMsg", "输入的原始密码错误！");
+//            return "/site/setting";
+//        }
+//    }
+
+    //    @LoginRequired
+    @RequestMapping(path = "/changePassword", method = {RequestMethod.GET, RequestMethod.POST})
+    //修改密码，model变量用来向页面返回数据
+    public String changePassword(String oldPassword, String newPassword, String confirmPassword, Model model) {
         User user = hostHolder.getUser();
-        Map<String, Object> map = userService.updatePassword(password, newPassword, user.getId());
+        Map<String, Object> map = userService.changePassword(user, oldPassword, newPassword, confirmPassword);
         if (map == null || map.isEmpty()) {
-            //传给templates注册成功信息
             model.addAttribute("msg", "密码修改成功");
-            //跳到回个人设置页面
             model.addAttribute("target", "/logout");
             return "/site/operate-result";
+//            return "redirect:/index";
         } else {
-            //失败了传失败信息，跳到到原来的页面
-            model.addAttribute("passwordMsg", "输入的原始密码错误！");
+            model.addAttribute("oldPasswordMsg", map.get("oldPasswordMsg"));
+            model.addAttribute("newPasswordMsg", map.get("newPasswordMsg"));
+            model.addAttribute("confirmPasswordMsg", map.get("confirmPasswordMsg"));
             return "/site/setting";
         }
     }
+
+    @RequestMapping(path = "/changePasswordByCode", method = {RequestMethod.GET, RequestMethod.POST})
+    //修改密码，model变量用来向页面返回数据
+    public String changePasswordByCode(String email, String code, String password, Model model,
+                                       @CookieValue("codeOwner") String codeOwner) {
+        String kaptcha = null;
+        try {
+            if (StringUtils.isNotBlank(codeOwner)) {
+                String redisKey = RedisKeyUtil.getCodeKey(codeOwner);
+                kaptcha = (String) redisTemplate.opsForValue().get(redisKey);
+            }
+        } catch (Exception e) {
+            model.addAttribute("codeMsg", "验证码失效!");
+            return "/site/forget";
+        }
+
+
+        if (StringUtils.isBlank(kaptcha) || StringUtils.isBlank(code) || !kaptcha.equals(code)) {
+            model.addAttribute("codeMsg", "验证码不正确!");
+            return "/site/forget";
+        }
+        Map<String, Object> map = userService.changePasswordByCode(email, password);
+        if (map.containsKey("success")) {
+            return "redirect:/login";
+        } else {
+            model.addAttribute("passwordMsg", map.get("passwordMsg"));
+            return "/site/forget";
+        }
+    }
+
+    @RequestMapping(path = "/forgetPassword", method = RequestMethod.GET)
+    //忘记密码
+    public String forgetPassword() {
+        return "/site/forget";
+    }
+
+    @RequestMapping(path = "/sendCode", method = RequestMethod.POST)
+    //向邮箱发送验证码
+    @ResponseBody
+    public String sendCode(String email, HttpServletResponse response) {
+        User user = userService.findUserByEmail(email);
+        if (user == null) {
+            return CommunityUtil.getJSONString(1, "您输入的邮箱格式有误或未注册");
+        }
+        userService.sendCode(email, response);
+        return CommunityUtil.getJSONString(0);
+    }
+
 
     // 个人主页
     @RequestMapping(path = "/profile/{userId}", method = RequestMethod.GET)
@@ -244,7 +316,7 @@ public class UserController implements CommunityConstant {
 
     //跳转到我的帖子页面
     @RequestMapping(path = "/mypost/{userId}", method = RequestMethod.GET)
-    public String toMyPost(@PathVariable("userId") int userId,Model model, Page page,
+    public String toMyPost(@PathVariable("userId") int userId, Model model, Page page,
                            @RequestParam(name = "infoMode", defaultValue = "1") int infoMode) {
         User user = userService.findUserById(userId);
         if (user == null) {
@@ -255,11 +327,11 @@ public class UserController implements CommunityConstant {
         // 设置分页信息
         page.setLimit(5);
         page.setRows(discussPostService.findDiscussPostRows(user.getId()));
-        page.setPath("/user/mypost/"+userId);
+        page.setPath("/user/mypost/" + userId);
 
 
         // 查询某用户发布的帖子
-        List<DiscussPost> discussPosts = discussPostService.findDiscussPosts(user.getId(), page.getOffset(), page.getLimit(),0);
+        List<DiscussPost> discussPosts = discussPostService.findDiscussPosts(user.getId(), page.getOffset(), page.getLimit(), 0);
         List<Map<String, Object>> list = new ArrayList<>();
         if (discussPosts != null) {
             for (DiscussPost post : discussPosts) {
@@ -283,7 +355,7 @@ public class UserController implements CommunityConstant {
 
     //跳转到我的评论页面
     @RequestMapping(path = "/mycomment/{userId}", method = RequestMethod.GET)
-    public String toMyReply(@PathVariable("userId") int userId,Model model, Page page,
+    public String toMyReply(@PathVariable("userId") int userId, Model model, Page page,
                             @RequestParam(name = "infoMode", defaultValue = "2") int infoMode) {
         User user = userService.findUserById(userId);
         if (user == null) {
@@ -294,10 +366,10 @@ public class UserController implements CommunityConstant {
         // 设置分页信息
         page.setLimit(5);
         page.setRows(commentService.findCommentCountById(user.getId()));
-        page.setPath("/user/mycomment/"+userId);
+        page.setPath("/user/mycomment/" + userId);
 
         // 获取用户所有评论 (而不是回复,所以在 sql 里加一个条件 entity_type = 1)
-        List<Comment> comments = commentService.findCommentsByUserId(user.getId(),page.getOffset(), page.getLimit());
+        List<Comment> comments = commentService.findCommentsByUserId(user.getId(), page.getOffset(), page.getLimit());
         List<Map<String, Object>> list = new ArrayList<>();
         if (comments != null) {
             for (Comment comment : comments) {

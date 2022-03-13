@@ -20,6 +20,8 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -203,19 +205,46 @@ public class UserService implements CommunityConstant/*extends IService<User>*/ 
     }
 
     //个人设置修改密码功能
-    public Map<String, Object> updatePassword(String password, String newPassword, int id) {
-        Map<String, Object> map = new HashMap<>();
-        User user = userMapper.selectById(id);
-        password = CommunityUtil.md5(password + user.getSalt());
-        if (!user.getPassword().equals(password)) {
-            map.put("passwordMsg", "输入密码错误！");
-            return map;
-        } else {//注意：存入新密码要以加密后的形式存进去
-            newPassword = CommunityUtil.md5(newPassword + user.getSalt());
-            userMapper.updatePassword(id, newPassword);
-        }
+//    public Map<String, Object> updatePassword(String password, String newPassword, int id) {
+//        Map<String, Object> map = new HashMap<>();
+//        User user = userMapper.selectById(id);
+//        password = CommunityUtil.md5(password + user.getSalt());
+//        if (!user.getPassword().equals(password)) {
+//            map.put("passwordMsg", "输入密码错误！");
+//            return map;
+//        } else {//注意：存入新密码要以加密后的形式存进去
+//            newPassword = CommunityUtil.md5(newPassword + user.getSalt());
+//            userMapper.updatePassword(id, newPassword);
+//        }
+//
+//        clearCache(id);
+//        return map;
+//    }
 
-        clearCache(id);
+    public Map<String, Object> changePassword(User user, String oldPassword, String newPassword, String confirmPassword) {
+        Map<String, Object> map = new HashMap<>();
+        // 验证密码
+        oldPassword = CommunityUtil.md5(oldPassword + user.getSalt());
+        if (!user.getPassword().equals(oldPassword)) {
+            map.put("oldPasswordMsg", "密码不正确!");
+            return map;
+        }
+        if (StringUtils.isBlank(newPassword)) {
+            map.put("newPasswordMsg", "密码不能为空!");
+            return map;
+        }
+        if (!newPassword.equals(confirmPassword)) {
+            map.put("confirmPasswordMsg", "两次输入的密码不一致!");
+            return map;
+        }
+        int id = user.getId();
+        newPassword = CommunityUtil.md5(newPassword + user.getSalt());
+        if (oldPassword.equals(newPassword)) {
+            map.put("newPasswordMsg", "旧密码与新密码一致!");
+            return map;
+        }
+        userMapper.updatePassword(id, newPassword);
+        clearCache(user.getId());
         return map;
     }
 
@@ -261,5 +290,47 @@ public class UserService implements CommunityConstant/*extends IService<User>*/ 
             }
         });
         return list;
+    }
+
+    public User findUserByEmail(String email) {
+        return userMapper.selectByEmail(email);
+    }
+
+    public void sendCode(String email, HttpServletResponse response) {
+        String text = CommunityUtil.generateUUID().substring(0, 6);
+        // 验证码的归属
+        String codeOwner = CommunityUtil.generateUUID();
+        Cookie cookie = new Cookie("codeOwner", codeOwner);
+        //失效的时间是10min
+        cookie.setMaxAge(60 * 10);
+        cookie.setPath(contextPath);
+        response.addCookie(cookie);
+        // 将验证码存入Redis,失效的时间是10min
+        String redisKey = RedisKeyUtil.getCodeKey(codeOwner);
+        redisTemplate.opsForValue().set(redisKey, text, 60 * 10, TimeUnit.SECONDS);
+
+        // 激活邮件,使用thymeleaf创建的对象携带变量
+        Context context = new Context();
+        context.setVariable("email", email);
+        context.setVariable("text", text);
+        //使用模板引擎，利用thymeleaf，将context放到/mail/activation.html文件中，然后再利用mail包发送给邮箱
+        String content = templateEngine.process("/mail/forget", context);
+        mailClient.sendMail(email, "忘记密码", content);
+
+    }
+
+    public Map<String, Object> changePasswordByCode(String email, String password) {
+        Map<String, Object> map = new HashMap<>();
+        // 验证密码
+        if (StringUtils.isBlank(password)) {
+            map.put("passwordMsg", "密码不能为空!");
+            return map;
+        }
+        User user = userMapper.selectByEmail(email);
+        password = CommunityUtil.md5(password + user.getSalt());
+        userMapper.updatePassword(user.getId(), password);
+        map.put("success", "success");
+        clearCache(user.getId());
+        return map;
     }
 }

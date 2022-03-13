@@ -142,3 +142,10 @@ caffeine:
   posts:
     max-size: 15
     expire-seconds: 180
+# actuator
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+        exclude: info,caches
