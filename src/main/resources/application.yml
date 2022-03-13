@@ -109,8 +109,17 @@ mybatis:
   #  # 配置类型别名所对应的包
   #  type-aliases-package: com.dyl.community.entity
 
-  # community
+# community
 community:
   path:
     domain: http://127.0.0.1:8080
     upload: D:/Learn/data/community/upload
+
+# wk
+wk:
+  image:
+    command: D:/app/wkhtmltopdf/bin/wkhtmltoimage
+    storage: D:/Learn/data/community/wk-images
+  pdf:
+    command: D:/app/wkhtmltopdf/bin/wkhtmltopdf
+    storage: D:/Learn/data/community/wk-pdfs
