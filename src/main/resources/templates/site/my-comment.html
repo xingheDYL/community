@@ -36,21 +36,19 @@
                 <a th:href="@{|/user/profile/${user.id}|}" class="text-muted position-absolute rt-0"
                    th:if="${loginUser.id==user.id}">返回个人主页&gt;</a>
             </div>
-            <!-- 我的帖子 -->
+            <!-- 我的回复 -->
             <div class="mt-4">
-                <h6><b class="square"></b> 发布的帖子(<i th:text="${postCount}"></i>)</h6>
+                <h6><b class="square"></b> 评论的帖子(<i th:text="${commentCount}"></i>)</h6>
                 <ul class="list-unstyled mt-4 pl-3 pr-3">
-                    <li class="border-bottom pb-3 mt-4" th:each="map:${discussPosts}">
+                    <li class="border-bottom pb-3 mt-4" th:each="map:${comments}">
                         <div class="font-size-16 text-info">
-                            <a th:href="@{|/discuss/detail/${map.post.id}|}" class="text-info"
-                               th:utext="${map.post.title}">备战春招，面试刷题跟他复习，一个月全搞定！</a>
-                            <span class="float-right font-size-12 text-muted">
-                                赞 <i class="mr-2" th:utext="${map.likeCount}"></i>|&nbsp;&nbsp;回帖 <i class="mr-2"
-                                                                                                     th:utext="${map.post.commentCount}"></i>
-                                &nbsp;发布于 <b th:text="${#dates.format(map.post.createTime, 'yyyy-MM-dd HH:mm:ss')}"></b>
-                            </span>
+                            <a th:href="@{|/discuss/detail/${map.comment.entityId}|}" class="text-info"
+                               th:utext="${map.discussPostTitle}"></a>
                         </div>
-
+                        <div class="mt-1 font-size-14" th:utext="${map.comment.content}"></div>
+                        <div class="text-right font-size-12 text-muted">
+                            评论于 <b th:text="${#dates.format(map.comment.createTime, 'yyyy-MM-dd HH:mm:ss')}"></b>
+                        </div>
                     </li>
                 </ul>
                 <!-- 分页 -->

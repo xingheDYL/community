@@ -11,6 +11,9 @@
     <sql id="insertFields">
         user_id, entity_type, entity_id, target_id, content, status, create_time
     </sql>
+    <update id="updateStatus">
+        update comment set status = #{status} where entity_id = #{entityId} and entity_type=1
+    </update>
 
     <select id="selectCommentsByEntity" resultType="Comment">
         select
@@ -35,6 +38,22 @@
         select
         <include refid="selectFields"/>
         from comment where id = #{id}
+    </select>
+    <select id="selectCommentCountById" resultType="int">
+        select count(id)
+        from comment
+        where status = 0
+        and user_id = #{id}
+        and entity_type=1
+    </select>
+    <select id="selectCommentsByUserId" resultType="Comment">
+        select <include refid="selectFields"/>
+        from comment
+        where status = 0
+        and user_id=#{id}
+        and entity_type=1
+        order by create_time desc
+        limit #{offset}, #{limit}
     </select>
 
     <insert id="insertComment" parameterType="Comment">

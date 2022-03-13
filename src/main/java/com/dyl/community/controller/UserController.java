@@ -1,10 +1,11 @@
 package com.dyl.community.controller;
 
 import com.dyl.community.annotation.LoginRequired;
+import com.dyl.community.entity.Comment;
+import com.dyl.community.entity.DiscussPost;
+import com.dyl.community.entity.Page;
 import com.dyl.community.entity.User;
-import com.dyl.community.service.FollowService;
-import com.dyl.community.service.LikeService;
-import com.dyl.community.service.UserService;
+import com.dyl.community.service.*;
 import com.dyl.community.util.CommunityConstant;
 import com.dyl.community.util.CommunityUtil;
 import com.dyl.community.util.HostHolder;
@@ -17,10 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
@@ -29,6 +27,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.security.spec.ECField;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -72,6 +73,12 @@ public class UserController implements CommunityConstant {
 
     @Value("${qiniu.bucket.header.url}")
     private String headerBucketUrl;
+
+    @Autowired
+    private DiscussPostService discussPostService;
+
+    @Autowired
+    private CommentService commentService;
 
     @LoginRequired
     @RequestMapping(path = "/setting", method = RequestMethod.GET)
@@ -233,5 +240,84 @@ public class UserController implements CommunityConstant {
         model.addAttribute("hasFollowed", hasFollowed);
 
         return "/site/profile";
+    }
+
+    //跳转到我的帖子页面
+    @RequestMapping(path = "/mypost/{userId}", method = RequestMethod.GET)
+    public String toMyPost(@PathVariable("userId") int userId,Model model, Page page,
+                           @RequestParam(name = "infoMode", defaultValue = "1") int infoMode) {
+        User user = userService.findUserById(userId);
+        if (user == null) {
+            throw new RuntimeException("该用户不存在!");
+        }
+        model.addAttribute("user", user);
+
+        // 设置分页信息
+        page.setLimit(5);
+        page.setRows(discussPostService.findDiscussPostRows(user.getId()));
+        page.setPath("/user/mypost/"+userId);
+
+
+        // 查询某用户发布的帖子
+        List<DiscussPost> discussPosts = discussPostService.findDiscussPosts(user.getId(), page.getOffset(), page.getLimit(),0);
+        List<Map<String, Object>> list = new ArrayList<>();
+        if (discussPosts != null) {
+            for (DiscussPost post : discussPosts) {
+                Map<String, Object> map = new HashMap<>();
+                map.put("post", post);
+                // 点赞数量
+                long likeCount = likeService.findEntityLikeCount(ENTITY_TYPE_POST, post.getId());
+                map.put("likeCount", likeCount);
+
+                list.add(map);
+            }
+            model.addAttribute("discussPosts", list);
+        }
+        // 帖子数量
+        int postCount = discussPostService.findDiscussPostRows(user.getId());
+        model.addAttribute("postCount", postCount);
+        model.addAttribute("infoMode", infoMode);
+
+        return "site/my-post";
+    }
+
+    //跳转到我的评论页面
+    @RequestMapping(path = "/mycomment/{userId}", method = RequestMethod.GET)
+    public String toMyReply(@PathVariable("userId") int userId,Model model, Page page,
+                            @RequestParam(name = "infoMode", defaultValue = "2") int infoMode) {
+        User user = userService.findUserById(userId);
+        if (user == null) {
+            throw new RuntimeException("该用户不存在!");
+        }
+        model.addAttribute("user", user);
+
+        // 设置分页信息
+        page.setLimit(5);
+        page.setRows(commentService.findCommentCountById(user.getId()));
+        page.setPath("/user/mycomment/"+userId);
+
+        // 获取用户所有评论 (而不是回复,所以在 sql 里加一个条件 entity_type = 1)
+        List<Comment> comments = commentService.findCommentsByUserId(user.getId(),page.getOffset(), page.getLimit());
+        List<Map<String, Object>> list = new ArrayList<>();
+        if (comments != null) {
+            for (Comment comment : comments) {
+                Map<String, Object> map = new HashMap<>();
+                map.put("comment", comment);
+
+                // 根据实体 id 查询对应的帖子标题
+                String discussPostTitle = discussPostService.findDiscussPostById(comment.getEntityId()).getTitle();
+                map.put("discussPostTitle", discussPostTitle);
+
+                list.add(map);
+            }
+            model.addAttribute("comments", list);
+        }
+
+        // 回复的数量
+        int commentCount = commentService.findCommentCountById(user.getId());
+        model.addAttribute("commentCount", commentCount);
+        model.addAttribute("infoMode", infoMode);
+
+        return "site/my-comment";
     }
 }
