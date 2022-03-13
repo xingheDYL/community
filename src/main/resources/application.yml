@@ -136,3 +136,9 @@ qiniu:
     share:
       name: dyl-community-share
       url: http://community.share.img.dyl.fit
+
+# caffeine
+caffeine:
+  posts:
+    max-size: 15
+    expire-seconds: 180
