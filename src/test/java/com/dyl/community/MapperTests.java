@@ -3,6 +3,7 @@ package com.dyl.community;
 
 //import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 //import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+
 import com.dyl.community.entity.DiscussPost;
 import com.dyl.community.entity.LoginTicket;
 import com.dyl.community.entity.Message;
@@ -79,7 +80,7 @@ public class MapperTests {
 
     @Test
     public void testSelectPosts() {
-        List<DiscussPost> list = discussPostMapper.selectDiscussPosts(149, 0, 10);
+        List<DiscussPost> list = discussPostMapper.selectDiscussPosts(149, 0, 10, 0);
         for (DiscussPost post : list) {
             System.out.println(post);
         }
@@ -132,7 +133,7 @@ public class MapperTests {
     }
 
     @Test
-    public void testAddMessage(){
+    public void testAddMessage() {
         Message message = new Message();
         message.setFromId(112);
         message.setToId(111);

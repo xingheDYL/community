@@ -1,6 +1,7 @@
 package com.dyl.community.service;
 
 //import com.baomidou.mybatisplus.extension.service.IService;
+
 import com.dyl.community.entity.DiscussPost;
 import com.dyl.community.mapper.DiscussPostMapper;
 import com.dyl.community.util.SensitiveFilter;
@@ -21,8 +22,8 @@ public class DiscussPostService/* extends IService<DiscussPost> */ {
     @Autowired
     private SensitiveFilter sensitiveFilter;
 
-    public List<DiscussPost> findDiscussPosts(int userId, int offset, int limit) {
-        return discussPostMapper.selectDiscussPosts(userId, offset, limit);
+    public List<DiscussPost> findDiscussPosts(int userId, int offset, int limit, int orderMode) {
+        return discussPostMapper.selectDiscussPosts(userId, offset, limit, orderMode);
     }
 
     public int findDiscussPostRows(int userId) {
@@ -52,11 +53,15 @@ public class DiscussPostService/* extends IService<DiscussPost> */ {
         return discussPostMapper.updateCommentCount(id, commentCount);
     }
 
-    public int updateType(int id,int type){
+    public int updateType(int id, int type) {
         return discussPostMapper.updateType(id, type);
     }
 
-    public int updateStatus(int id,int status){
+    public int updateStatus(int id, int status) {
         return discussPostMapper.updateStatus(id, status);
+    }
+
+    public int updateScore(int id, double score) {
+        return discussPostMapper.updateScore(id, score);
     }
 }
