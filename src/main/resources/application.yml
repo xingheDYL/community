@@ -123,3 +123,16 @@ wk:
   pdf:
     command: D:/app/wkhtmltopdf/bin/wkhtmltopdf
     storage: D:/Learn/data/community/wk-pdfs
+
+# qiniu
+qiniu:
+  key:
+    access: n1P9f1O0M7WUq0LB2xOZe2aPie-Vgka3LGF_5ov6
+    secret: mfK4_VfiujRhg9bpPxSQoFaLr95Dedr4XzQPG8Xf
+  bucket:
+    header:
+      name: dyl-community-header
+      url: http://community.header.img.dyl.fit
+    share:
+      name: dyl-community-share
+      url: http://community.share.img.dyl.fit
