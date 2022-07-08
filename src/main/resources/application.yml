@@ -23,7 +23,7 @@ spring:
     host: smtp.qq.com
     port: 465
     username: 1329749225@qq.com
-    password: jzsmgryogrpahebi
+    password: ujdggncsdkwkiaif
     protocol: smtps
     properties:
       mail:
@@ -118,10 +118,10 @@ community:
 # wk
 wk:
   image:
-    command: D:/app/wkhtmltopdf/bin/wkhtmltoimage
+    command: D:/APP/wkhtmltopdf/bin/wkhtmltoimage
     storage: D:/Learn/data/community/wk-images
   pdf:
-    command: D:/app/wkhtmltopdf/bin/wkhtmltopdf
+    command: D:/APP/wkhtmltopdf/bin/wkhtmltopdf
     storage: D:/Learn/data/community/wk-pdfs
 
 # qiniu

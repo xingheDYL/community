@@ -81,7 +81,7 @@ public class ElasticsearchTests {
     @Test
     public void testSearchByRepository() {
         SearchQuery searchQuery = new NativeSearchQueryBuilder()
-                .withQuery(QueryBuilders.multiMatchQuery("互联网寒冬", "title", "content"))
+                .withQuery(QueryBuilders.multiMatchQuery("互联网", "title", "content"))
                 .withSort(SortBuilders.fieldSort("type").order(SortOrder.DESC))
                 .withSort(SortBuilders.fieldSort("score").order(SortOrder.DESC))
                 .withSort(SortBuilders.fieldSort("createTime").order(SortOrder.DESC))

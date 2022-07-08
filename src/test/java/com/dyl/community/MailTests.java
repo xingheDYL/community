@@ -16,16 +16,19 @@ public class MailTests {
     @Autowired
     private MailClient mailClient;
 
+    /**
+     * 注入template模板引擎
+     */
     @Autowired
     private TemplateEngine templateEngine;
 
     @Test
-    public void testSendTextMail() {
+    void testSendTextMail() {
         mailClient.sendMail("2334238730@qq.com", "TEXT", "Welcome.");
     }
 
     @Test
-    public void testSendHtmlMail() {
+    void testSendHtmlMail() {
         Context context = new Context();
         context.setVariable("username","sunday");
 
